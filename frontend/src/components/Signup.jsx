@@ -40,7 +40,7 @@ function Signup({ onSignupSuccess, onSwitchToLogin }) {
     <div className="signup-container">
       <div className="signup-card">
         <h2>Create Account</h2>
-        <p className="subtitle">Join 3D Animation Editor</p>
+          <p className="subtitle">Join AnivoAnimation</p>
 
         {error && <div className="error-message">{error}</div>}
 

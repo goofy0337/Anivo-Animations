@@ -61,7 +61,7 @@ function App() {
       {user && (
         <header className="app-header">
           <div className="header-left">
-            <h1>3D Animation Editor</h1>
+            <h1>AnivoAnimation</h1>
           </div>
           <div className="header-right">
             <span className="user-name">Welcome, {user.username}!</span>
