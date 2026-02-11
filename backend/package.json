@@ -21,7 +21,8 @@
     "dotenv": "^16.0.3",
     "cors": "^2.8.5",
     "sqlite3": "^5.1.6",
-    "body-parser": "^1.20.2"
+    "body-parser": "^1.20.2",
+    "google-auth-library": "^9.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

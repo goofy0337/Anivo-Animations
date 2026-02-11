@@ -5,12 +5,15 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import sqlite3 from 'sqlite3';
+import { OAuth2Client } from 'google-auth-library';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4567;
 const JWT_SECRET = process.env.JWT_SECRET;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const googleClient = GOOGLE_CLIENT_ID ? new OAuth2Client(GOOGLE_CLIENT_ID) : null;
 
 // Middleware
 app.use(cors());
@@ -148,6 +151,70 @@ app.post('/api/login', (req, res) => {
       user: { id: user.id, username: user.username, email: user.email }
     });
   });
+});
+
+// Google OAuth Login
+app.post('/api/google-login', async (req, res) => {
+  const { token: googleToken } = req.body;
+
+  if (!googleToken || !googleClient) {
+    return res.status(400).json({ message: 'Google token or client not configured' });
+  }
+
+  try {
+    const ticket = await googleClient.verifyIdToken({
+      idToken: googleToken,
+      audience: GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const email = payload.email;
+    const username = payload.name || email.split('@')[0];
+    const googleId = payload.sub;
+
+    // Check if user exists
+    db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
+      if (err) {
+        return res.status(500).json({ message: 'Server error' });
+      }
+
+      if (user) {
+        // User exists, generate token
+        const token = generateToken(user.id);
+        return res.json({
+          message: 'Login successful',
+          token,
+          user: { id: user.id, username: user.username, email: user.email }
+        });
+      }
+
+      // User doesn't exist, create a new account
+      const randomPassword = Math.random().toString(36).slice(-12);
+      bcrypt.hash(randomPassword, 10, (err, hashedPassword) => {
+        if (err) {
+          return res.status(500).json({ message: 'Server error' });
+        }
+
+        db.run('INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+          [username, email, hashedPassword],
+          function(err) {
+            if (err) {
+              return res.status(500).json({ message: 'Server error' });
+            }
+
+            const token = generateToken(this.lastID);
+            res.status(201).json({
+              message: 'User created and logged in successfully',
+              token,
+              user: { id: this.lastID, username, email }
+            });
+          });
+      });
+    });
+  } catch (error) {
+    console.error('Google token verification error:', error);
+    return res.status(401).json({ message: 'Invalid Google token' });
+  }
 });
 
 // Get current user

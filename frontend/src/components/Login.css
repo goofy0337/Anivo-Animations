@@ -109,3 +109,75 @@
 .link-btn:hover {
   color: #0099cc;
 }
+.google-signin-container {
+  margin-bottom: 20px;
+}
+
+.google-button-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.google-button-wrapper > div {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.google-button-wrapper > div > div {
+  display: flex !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+.google-button-wrapper iframe {
+  width: 100% !important;
+  min-width: 280px !important;
+  max-width: 400px !important;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  gap: 10px;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e0e0e0;
+}
+
+.divider span {
+  color: #999;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-google {
+  width: 100%;
+  padding: 12px;
+  background: white;
+  color: #333;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: none;
+}
+
+.btn-google:hover:not(:disabled) {
+  background: #f8f8f8;
+  border-color: #4285f4;
+}
+
+.btn-google:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
